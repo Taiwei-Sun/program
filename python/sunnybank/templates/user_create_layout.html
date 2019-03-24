@@ -1,0 +1,58 @@
+{% extends "main_layout.html" %}
+{% block content %}
+    <div id="toolbar" style="position:relative">
+        <div class="keep-open btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="width:400px;">
+                <form class="form" action="{{ url_for('report_api.get_users') }}" method="post">
+                    <div style="display:none;">
+                        <input id="creator" name="creator" type="hidden" value="{{ user }}">
+                    </div>
+                    <li>
+                        <div class="col-sm-offset-1">
+                            <label>帳號：</label>
+                            <input type="text" id="user_id" name="user_id">
+			    </br>
+                            <label>密碼：</label>
+                            <input type="text" id="user_paw" name="user_paw">
+                        </div>
+
+                    </li>
+                    <li>
+                        <div class="col-sm-offset-3 col-sm-1">
+                            <button type="submit" class="btn btn-default">確定</button>
+                        </div>
+                    </li>
+                </form>
+            </ul>
+        </div>
+        <div class="keep-open btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="glyphicon glyphicon-minus"></i>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="width:400px;">
+                <form class="form" action="{{ url_for('report_api.del_users') }}" method="post">
+                    <input id="creator" name="creator" type="hidden" value="{{ user }}">
+                    <li>
+                        <div class="col-sm-offset-1">
+                            <label>帳號：</label>
+                            <input type="text" id="user_id" name="user_id">
+                        </div>
+
+                    </li>
+                    <li>
+                        <div class="col-sm-offset-3 col-sm-1">
+                            <button type="submit" class="btn btn-default">確定</button>
+                        </div>
+                    </li>
+                </form>
+            </ul>
+
+        </div>
+    </div>
+    {% block user_create_data %}{% endblock %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "head.html" %}
+{% block body %}
+    <nav class="navbar navbar-default navbar-fixed-top index-navbar">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{ url_for('report_api.f5log') }}">陽信銀行</a>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('report_api.f5log') }}">F5 系統記錄</a></li>
+            </ul>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('report_api.ftplog') }}">FTP 系統記錄</a></li>
+            </ul>
+        </div>
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('report_api.get_f5_stat') }}">F5 統計資料</a></li>
+            </ul>
+        </div>
+        {% if user == 'admin' %}
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('report_api.get_users') }}">人員管理</a></li>
+            </ul>
+        </div>
+        {% endif %}
+        <div>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown " id="menuUser">
+                    <a class="dropdown-toggle" data-toggle="dropdown">{{ user }}</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+      </div>
+    </nav>
+    {% block content %}{% endblock %}
+{% endblock %}

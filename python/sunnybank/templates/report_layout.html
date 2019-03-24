@@ -1,0 +1,49 @@
+{% extends "main_layout.html" %}
+{% block content %}
+    <div id="toolbar" style="position:relative">
+        <div class="keep-open btn-group"style="position:absolute; width:40px; height:40">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <i class="glyphicon glyphicon-calendar"></i>
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu" style="width:400px;">
+                {% if action == 0 %}
+                <form class="form" action="{{ url_for('report_api.f5log') }}" method="post">
+                {% elif action == 1 %}
+                <form class="form" action="{{ url_for('report_api.ftplog') }}" method="post">
+                {% elif action == 2 %}
+                <form class="form" action="{{ url_for('report_api.get_f5_stat') }}" method="post">
+                {% endif %}
+
+                    {{ form.hidden_tag() }}
+                    <li>
+                        <div class="col-sm-offset-1">
+                            <label>開始時間：</label>
+                            <input data-provide="datepicker" id="start_time" name="start_time">
+                        </div>
+
+                    </li>
+                    <li>
+                        <div class="col-sm-offset-1">
+                            <label>結束時間：</label>
+                            <input data-provide="datepicker" id="end_time" name="end_time">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="col-sm-offset-3 col-sm-1">
+                            <button type="submit" class="btn btn-default">確定</button>
+                        </div>
+                    </li>
+                </form>
+            </ul>
+        </div>
+
+        <div style="position:absolute;left:60; width:150px;">
+            <select class="form-control">
+                <option value="all">匯出全部</option>
+                <option value="selected">匯出選擇</option>
+            </select>
+        </div>
+    </div>
+    {% block report_data %}{% endblock %}
+{% endblock %}

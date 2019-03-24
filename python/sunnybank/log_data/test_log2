@@ -1,0 +1,14 @@
+Feb  7 12:43:06 f51 notice tmm3[12476]: 01490500:5: /Common/TestInternalAP:Common:a8e16fcb: New session from client IP 10.7.5.205 (ST=/CC=/C=) at VIP 10.80.1.4 Listener /Common/InternalToCoreVip (Reputation=Unknown)
+Dec  7 12:43:06 f51 notice tmm3[12476]: 01490500:5: /Common/TestInternalAP:Common:a8e16fca: New session from client IP 10.7.5.205 (ST=/CC=/C=) at VIP 10.80.1.4 Listener /Common/InternalToCoreVip (Reputation=Unknown)
+Dec  7 12:43:17 f51 notice apmd[7284]: 01490113:5: /Common/TestInternalAP:Common:a8e16fca: session.machine_info.last.net_adapter.list.[0].mac_address is 7C:7A:91:76:87:11
+Dec  7 12:43:21 f51 notice apmd[7284]: 01490010:5: /Common/TestInternalAP:Common:a8e16fca: Username 'f5qnap'
+Dec  7 12:44:09 f51 notice tmm1[12476]: 01490549:5: /Common/TestInternalAP:Common:a8e16fca: Assigned PPP Dynamic IPv4: 10.51.198.247 Tunnel Type: VPN_TUNNELTYPE_TLS NA Resource: /Common/TestInternalAP Client IP: 10.7.5.205
+Feb  8 06:59:38 qfile01 qlogd[24599]: conn log: Users: admin, Source IP: 203.75.8.193, Computer name: localhost, Connection type: FTP, Accessed resources: /信託部/禮卷請款明細/2017-02-07/[103050760009] 20170207095914.csv, Action: Write
+Feb  8 09:40:35 qfile01 qlogd[24599]: conn log: Users: SUNNY\58003, Source IP: 10.1.31.2, Computer name: ---, Connection type: HTTP, Accessed resources: Administration, Action: Login Fail
+Feb  8 09:40:39 qfile01 qlogd[24599]: conn log: Users: SUNNY\58003, Source IP: 10.1.31.2, Computer name: ---, Connection type: HTTP, Accessed resources: Administration, Action: Login OK
+Feb  8 09:42:02 qfile01 qlogd[24599]: conn log: Users: SUNNY\58003, Source IP: 10.1.31.2, Computer name: ---, Connection type: HTTP, Accessed resources: /交換區/FTP/branch/031/backup/smeg1060207.tx, Action: Open
+Feb  8 09:44:38 qfile01 qlogd[24599]: conn log: Users: SUNNY\58003, Source IP: 10.1.31.2, Computer name: ---, Connection type: HTTP, Accessed resources: /交換區/FTP/branch/031/backup/smeg1060207.txt, Action: Read
+Feb  8 10:23:23 qfile01 qlogd[24599]: conn log: Users: admin, Source IP: 10.7.5.79, Computer name: ---, Connection type: HTTP, Accessed resources: Administration, Action: Login OK
+Feb  8 10:24:17 qfile01 qlogd[24599]: conn log: Users: admin, Source IP: 10.7.5.79, Computer name: ---, Connection type: HTTP, Accessed resources: ---, Action: Logout
+Feb  8 10:29:36 qfile01 qlogd[24599]: conn log: Users: admin, Source IP: 10.10.10.87, Computer name: ---, Connection type: SSH, Accessed resources: ---, Action: Login OK
+Mar  5 19:59:21 f51 notice tmm3[12763]: 01490500:5: /Common/TestInternalAP2:Common:ec47e2a3: New session from client IP 10.7.5.6 (ST=/CC=/C=) at VIP 10.80.1.4 Listener /Common/InternalToCoreVip (Reputation=Unknown)

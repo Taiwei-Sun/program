@@ -1,0 +1,40 @@
+     1                                  	BITS 16
+     2                                  
+     3                                  start:
+     4                                  start1:
+     5 00000000 B8C007                  	mov ax, 07c0h
+     6 00000003 052001                  	add ax, 288
+     7 00000006 8ED0                    	mov ss, ax
+     8 00000008 BC0010                  	mov sp, 4096
+     9                                  	
+    10 0000000B B8C007                  	mov ax, 07c0h
+    11 0000000E 8ED8                    	mov ds, ax
+    12                                  
+    13 00000010 BE[1E00]                	mov si, text_string
+    14 00000013 E81C00                  	call print_string
+    15                                  
+    16 00000016 EBFE                    	jmp $
+    17 00000018 EBE6                    	jmp start
+    18 0000001A EBE4                    	jmp start1
+    19 0000001C EB14                    	jmp print_string
+    20                                  
+    21 0000001E 54686973206973206D-     	text_string db 'This is my first OS', 0
+    22 00000027 79206669727374204F-
+    23 00000030 5300               
+    24                                  
+    25                                  print_string:
+    26 00000032 B40E                    	mov ah, 0Eh
+    27                                  
+    28                                  .repeat:
+    29 00000034 AC                      	lodsb
+    30 00000035 3C00                    	cmp al, 0
+    31 00000037 7404                    	je .done
+    32 00000039 CD10                    	int 10h
+    33 0000003B EBF7                    	jmp .repeat
+    34                                  
+    35                                  .done:
+    36 0000003D C3                      	ret
+    37                                  
+    38                                  
+    39 0000003E 00<rept>                	times 510-($-$$) db 0
+    40 000001FE 55AA                    	dw 0xAA55

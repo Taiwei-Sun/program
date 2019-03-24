@@ -1,0 +1,37 @@
+{% extends "user_create_layout.html" %}
+{% block user_create_data %}
+    <div class="index-content">
+        <div class="container">
+            <table id="table"
+                   data-toggle="table"
+                   data-toolbar="#toolbar"
+                   data-height=550
+                   data-striped=True
+                   data-url="{{ url_for('report_api.get_data', **index) }}"
+                   data-search="true"
+                   data-show-columns="true"
+                   data-pagination="true"
+                   data-query-params="queryParams"
+                   data-page-list="[5, 10, 20, 50, 100, 200]"
+                   data-sort-name="dateTime"
+                   data-sort-order="desc">
+                <thead>
+                    <tr>
+                        <th data-field="user"
+                            data-sortable="true">
+                                帳號
+                        </th>
+                        <th data-field="creator"
+                            data-sortable="true">
+                                建立者
+                        </th>
+                        <th data-field="createTime"
+                            data-sortable="true">
+                                建立時間
+                        </th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+{% endblock %}
