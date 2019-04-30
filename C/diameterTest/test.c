@@ -7,19 +7,25 @@
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <dictionary.h>
 
 
 int main()
 {
- unsigned char *c=&(unsigned char){0xaa};
- int i;
  
- //char cc=0x03;
+ 
+ char buf[50];
+ int rr=0;
+ rr=getStrByNum(buf,264);
+ if(rr!=0)
+  printf("getStrByNum(str,264) str=%s\n",buf);
+ else
+  printf("no find any\n");
+ 
+ rr=getNumByStr("Origin-Realm");
+ printf("getNumByStr(\"Origin-Realm\") Num=%d\n",rr);
 
- for(i=0;i<3;i++)
-  printf("c[%d]=%x\n",i,c[i]); 
- 
- //printf("cc=%02x\n",cc);
+
  exit(0);
 
 }

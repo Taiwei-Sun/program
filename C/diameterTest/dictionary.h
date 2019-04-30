@@ -1,5 +1,88 @@
 
 //AVP code
+//20190430 update
+#define DictionaryMax 49
+#define DictionaryStrMax 40
+char DictionaryListStr[DictionaryMax][DictionaryStrMax]={
+"Acct-Interim-Interval",
+"Accounting-Realtime-Required",
+"Acct-Multi-Session-Id",
+"Accounting-Record-Number",
+"Accounting-Record-Type",
+"Acct-Session-Id",
+"Accounting-Sub-Session-Id",
+"Acct-Application-Id",
+"Auth-Application-Id",
+"Auth-Request-Type",
+"Authorization-Lifetime",
+"Auth-Grace-Period",
+"Auth-Session-State",
+"Re-Auth-Request-Type",
+"Class",
+"Destination-Host",
+"Destination-Realm",
+"Disconnect-Cause",
+"Error-Message",
+"Error-Reporting-Host",
+"Event-Timestamp",
+"Experimental-Result",
+"Experimental-Result-Code",
+"Failed-AVP",
+"Firmware-Revision",
+"Host-IP-Address",
+"Inband-Security-Id",
+"Multi-Round-Time-Out",
+"Origin-Host",
+"Origin-Realm",
+"Origin-State-Id",
+"Product-Name",
+"Proxy-Host",
+"Proxy-Info",
+"Proxy-State",
+"Redirect-Host",
+"Redirect-Host-Usage",
+"Redirect-Max-Cache-Time",
+"Result-Code",
+"Route-Record",
+"Session-Id",
+"Session-Timeout",
+"Session-Binding",
+"Session-Server-Failover",
+"Supported-Vendor-Id",
+"Termination-Cause",
+"User-Name",
+"Vendor-Id",
+"Vendor-Specific-Application-Id"};
+int DictionaryListNum[DictionaryMax]={85,483,50,485,480,44,287,259,258,274,291,276,277,285,25,293,283,273,281,294,55,297,298,279,267,257,299,272,264,296,278,269,280,284,33,292,261,262,268,282,263,27,270,271,265,295,1,266,260};
+
+char getAvpStrByNum(char* str,int num){
+ char findNum=0;
+ int i,j;
+ for(i=0;i<DictionaryMax;i++){
+  if(DictionaryListNum[i]==num){
+   findNum=1;
+   for(j=0;j<DictionaryStrMax;j++)
+    str[j]=DictionaryListStr[i][j];
+  }
+ }
+ return findNum;
+}
+
+int getAvpNumByStr(char* str){
+ int i,j;
+ for(i=0;i<DictionaryMax;i++){
+  j=0;
+  while(j<DictionaryStrMax){
+   if(DictionaryListStr[i][j]!=str[j])j=DictionaryStrMax;
+   else if(DictionaryListStr[i][j]=='\0')return DictionaryListNum[i];
+   j++;
+  }
+ }
+ return 0;
+}
+
+
+//---old
 int AcctInterimInterval=85;
 int AccountingRealtimeRequired=483;
 int AcctMultiSessionId=50;
