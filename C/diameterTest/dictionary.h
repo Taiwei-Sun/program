@@ -1,9 +1,23 @@
 
-//AVP code
-//20190430 update
-#define DictionaryMax 49
-#define DictionaryStrMax 40
-char DictionaryListStr[DictionaryMax][DictionaryStrMax]={
+
+//20190523 diameter header index and Avp index
+//20190430 AVP code list
+#define DiameterHeaderMax 7
+#define DiameterHeaderLenMax 20
+#define DiameterHeaderVersion 0
+#define DiameterHeaderMessageLenth 1
+#define DiameterHeaderFlags 2
+#define DiameterHeaderCommandCode 3
+#define DiameterHeaderApplicationID 4
+#define DiameterHeaderHopByHop 5
+#define DiameterHeaderEndToEnd 6
+
+int DiameterHeaderIndexListNum[DiameterHeaderMax]={0,1,4,5,8,12,16}
+
+
+#define AvpMax 49
+#define AvpStrMax 40
+char AvpListStr[AvpMax][AvpStrMax]={
 "Acct-Interim-Interval",
 "Accounting-Realtime-Required",
 "Acct-Multi-Session-Id",
@@ -53,16 +67,17 @@ char DictionaryListStr[DictionaryMax][DictionaryStrMax]={
 "User-Name",
 "Vendor-Id",
 "Vendor-Specific-Application-Id"};
-int DictionaryListNum[DictionaryMax]={85,483,50,485,480,44,287,259,258,274,291,276,277,285,25,293,283,273,281,294,55,297,298,279,267,257,299,272,264,296,278,269,280,284,33,292,261,262,268,282,263,27,270,271,265,295,1,266,260};
+int AvpListNum[AvpMax]={85,483,50,485,480,44,287,259,258,274,291,276,277,285,25,293,283,273,281,294,55,297,298,279,267,257,299,272,264,296,278,269,280,284,33,292,261,262,268,282,263,27,270,271,265,295,1,266,260};
+
 
 char getAvpStrByNum(char* str,int num){
  char findNum=0;
  int i,j;
- for(i=0;i<DictionaryMax;i++){
-  if(DictionaryListNum[i]==num){
+ for(i=0;i<AvpMax;i++){
+  if(AvpListNum[i]==num){
    findNum=1;
-   for(j=0;j<DictionaryStrMax;j++)
-    str[j]=DictionaryListStr[i][j];
+   for(j=0;j<AvpStrMax;j++)
+    str[j]=AvpListStr[i][j];
   }
  }
  return findNum;
@@ -70,15 +85,44 @@ char getAvpStrByNum(char* str,int num){
 
 int getAvpNumByStr(char* str){
  int i,j;
- for(i=0;i<DictionaryMax;i++){
+ for(i=0;i<AvpMax;i++){
   j=0;
-  while(j<DictionaryStrMax){
-   if(DictionaryListStr[i][j]!=str[j])j=DictionaryStrMax;
-   else if(DictionaryListStr[i][j]=='\0')return DictionaryListNum[i];
+  while(j<AvpStrMax){
+   if(AvpListStr[i][j]!=str[j])j=AvpStrMax;
+   else if(AvpListStr[i][j]=='\0')return AvpListNum[i];
    j++;
   }
  }
  return 0;
+}
+
+int charV2IntV(char *buf,int start,int len)
+{
+ int i,v=0;
+ for(i=start;i<start+len;i++){
+	 v=v*16;
+	 v=v+buf[i];
+
+ }
+ 
+ return v;
+}
+
+int getDiameterHeaderValue(int DH,char* buf){
+	
+	index=DiameterHeaderIndexListNum[DH];
+	if(DH+1<DiameterHeaderMax)
+		len=DiameterHeaderIndexListNum[DH+1]-index;
+	else len=DiameterHeaderLenMax-index;
+	
+	return charV2IntV(buff,index,len);
+}
+
+int getAvpIndex(char* str,char* buf){
+	int index=20;
+	int len=getDiameterHeaderValue(DiameterHeaderMessageLenth,buf);
+	//!!!
+	
 }
 
 
