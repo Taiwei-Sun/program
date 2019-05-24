@@ -6,6 +6,7 @@
 
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <dictionary.h>
 
 #define BUFFER_SIZE 1024
 #define SERVER_IP "0.0.0.0"
@@ -33,8 +34,8 @@ int main()
  bind(server_sockfd, (struct sockaddr*)&server_address, server_len);
 
  listen(server_sockfd, 5);
- while(1)
- {
+ //while(1)
+ //{
   unsigned char buffer[BUFFER_SIZE];
   int in_len=0;
   int i;
@@ -60,14 +61,32 @@ int main()
   printf("\nEnd\n");
  
 
+
+  int ttt=getDiameterHeaderNum(DiameterHeaderMessageLenth,buffer);
+  printf("message length=%d\n",ttt);
+  ttt=getDiameterHeaderNum(DiameterHeaderCommandCode,buffer);
+  printf("Command Code=%d\n",ttt);
+  ttt=getDiameterHeaderNum(DiameterHeaderApplicationID,buffer);
+  printf("Application ID=%d\n",ttt);
+  
+  ttt=findAvpIndexByStr("Origin-Host",buffer);
+  printf("Origin-Host index=%d\n",ttt);
+  ttt=findAvpIndexByStr("Origin-Realm",buffer);
+  printf("Origin-Realm index=%d\n",ttt);
+
+  char ccc[40];
+  int lll=getAvpDataStrByNum(buffer,ttt,ccc);
+  //printf("Origin-Host = %s\n",ccc);
+  printf("Origin-Realm = %s\n",ccc);
+
   //write(client_sockfd, &ch, 1);
   close(client_sockfd);
 
 
- }
+ //}
 
 
-
+ exit(0);
 }
 
 
