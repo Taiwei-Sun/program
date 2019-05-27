@@ -31,56 +31,8 @@ int HopByHop=0x7d;
 int EndToEnd=0xe8e26172;
 
 
-void intV2CharV(int v1,char *buf,int start,int len)
-{
- int i;
- for(i=start;i<len+start;i++){
-  int v2=v1;
-  v2=v2>>((len+start-i-1)*8);
-  v2=v2&0xff;
-  buf[i]=(unsigned char)v2;
- }
-}
 
 
-void addMessageHead(char *buf,int len)
-{
- intV2CharV(Version,buf,0,1);//version
- intV2CharV(len,buf,1,3);//message length
- intV2CharV(Flags,buf,4,1);//flags
- intV2CharV(CommandCode,buf,5,3);//command code
- intV2CharV(ApplicationID,buf,8,4);//application ID
- intV2CharV(HopByHop,buf,12,4);//hop-by-hop ID
- intV2CharV(EndToEnd,buf,16,4);//end-to-end ID
-}
-
-void addAVPStr(char *buf,char *avpName,int flags,int len,char *data, int *indexOri)
-{
- int code=getAvpNumByStr(avpName);
- int index=*indexOri;
- intV2CharV(code,buf,index,4);
- intV2CharV(flags&0xff,buf,index+4,1);
- intV2CharV(len,buf,index+4+1,3);
- int i;
- for(i=0;i<len-8;i++)
-  buf[index+4+1+3+i]=data[i];
-  
- for(i=0;i<4-len%4;i++)
-  buf[index+len+i]=0;
-
- *indexOri=index+len+(4-len%4)%4;
-}
-void addAVPNum32(char *buf,char* avpName,int flags,int len,int data, int *indexOri)
-{
- int code=getAvpNumByStr(avpName);
- int index=*indexOri;
- intV2CharV(code,buf,index,4);
- intV2CharV(flags&0xff,buf,index+4,1);
- intV2CharV(len,buf,index+4+1,3);
- intV2CharV(data,buf,index+4+1+3,4);
-
- *indexOri=index+len;
-}
 
 int main()
 {
@@ -111,20 +63,20 @@ int main()
 
 
  //add AVP
- addAVPStr(packet,"Origin-Host",0x40,AvpHeadLen+strlen(OriginHostStr),OriginHostStr,&pLen);
- addAVPStr(packet,"Origin-Realm",0x40,AvpHeadLen+strlen(OriginRealmStr),OriginRealmStr,&pLen);
- addAVPNum32(packet,"Vendor-Id",0x40,AvpHeadLen+sizeof(int),VendorIdNum_A,&pLen);
- addAVPStr(packet,"Product-Name",0x00,AvpHeadLen+strlen(ProductNameStr),ProductNameStr,&pLen);
- addAVPNum32(packet,"Inband-Security-Id",0x40,AvpHeadLen+sizeof(int),InbandSecurityIdNum,&pLen);
- addAVPNum32(packet,"Firmware-Revision",0x00,AvpHeadLen+sizeof(int),FirmwareRevisionNum,&pLen);
+ addAVPDataStrByCodeStr(packet,"Origin-Host",0x40,AvpHeadLen+strlen(OriginHostStr),OriginHostStr,&pLen);
+ addAVPDataStrByCodeStr(packet,"Origin-Realm",0x40,AvpHeadLen+strlen(OriginRealmStr),OriginRealmStr,&pLen);
+ addAVPDataNum32ByCodeStr(packet,"Vendor-Id",0x40,AvpHeadLen+sizeof(int),VendorIdNum_A,&pLen);
+ addAVPDataStrByCodeStr(packet,"Product-Name",0x00,AvpHeadLen+strlen(ProductNameStr),ProductNameStr,&pLen);
+ addAVPDataNum32ByCodeStr(packet,"Inband-Security-Id",0x40,AvpHeadLen+sizeof(int),InbandSecurityIdNum,&pLen);
+ addAVPDataNum32ByCodeStr(packet,"Firmware-Revision",0x00,AvpHeadLen+sizeof(int),FirmwareRevisionNum,&pLen);
  
  int bufLen=0;
- addAVPNum32(buf,"Vendor-Id",0x40,AvpHeadLen+sizeof(int),VendorIdNum_B,&bufLen);
- addAVPNum32(buf,"Auth-Application-Id",0x40,AvpHeadLen+sizeof(int),AuthApplicationIdNum,&bufLen);
- addAVPStr(packet,"Vendor-Specific-Application-Id",0x40,AvpHeadLen+bufLen,buf,&pLen);
+ addAVPDataNum32ByCodeStr(buf,"Vendor-Id",0x40,AvpHeadLen+sizeof(int),VendorIdNum_B,&bufLen);
+ addAVPDataNum32ByCodeStr(buf,"Auth-Application-Id",0x40,AvpHeadLen+sizeof(int),AuthApplicationIdNum,&bufLen);
+ addAVPDataStrByCodeStr(packet,"Vendor-Specific-Application-Id",0x40,AvpHeadLen+bufLen,buf,&pLen);
 
  //add diameter head
- addMessageHead(packet,pLen);
+ addDiameterHead(packet,pLen,CommandCode,ApplicationID,HopByHop,EndToEnd);
 
 
  write(sockfd, packet, sizeof(char)*pLen);

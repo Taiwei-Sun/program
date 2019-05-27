@@ -78,30 +78,20 @@ char AvpListStr[AvpMax][AvpStrMax]={
 int AvpListNum[AvpMax]={85,483,50,485,480,44,287,259,258,274,291,276,277,285,25,293,283,273,281,294,55,297,298,279,267,257,299,272,264,296,278,269,280,284,33,292,261,262,268,282,263,27,270,271,265,295,1,266,260};
 
 
-char getAvpStrByNum(char* str,int num){
- char findNum=0;
- int i,j;
- for(i=0;i<AvpMax;i++){
-  if(AvpListNum[i]==num){
-   findNum=1;
-   for(j=0;j<AvpStrMax;j++)
-    str[j]=AvpListStr[i][j];
-  }
- }
- return findNum;
-}
+int DiameterVersion=0x01;
+int DiameterFlags=0x80;
 
-int getAvpNumByStr(char* str){
- int i,j;
- for(i=0;i<AvpMax;i++){
-  j=0;
-  while(j<AvpStrMax){
-   if(AvpListStr[i][j]!=str[j])j=AvpStrMax;
-   else if(AvpListStr[i][j]=='\0')return AvpListNum[i];
-   j++;
-  }
+
+//!!!Function
+void intV2CharV(int v1,char *buf,int start,int len)
+{
+ int i;
+ for(i=start;i<len+start;i++){
+  int v2=v1;
+  v2=v2>>((len+start-i-1)*8);
+  v2=v2&0xff;
+  buf[i]=(unsigned char)v2;
  }
- return 0;
 }
 
 int charV2IntV(char *buf,int start,int len)
@@ -116,6 +106,81 @@ int charV2IntV(char *buf,int start,int len)
  
  return v;
 }
+char getAvpCodeStrByNum(char* str,int num){
+ char findNum=0;
+ int i,j;
+ for(i=0;i<AvpMax;i++){
+  if(AvpListNum[i]==num){
+   findNum=1;
+   for(j=0;j<AvpStrMax;j++)
+    str[j]=AvpListStr[i][j];
+  }
+ }
+ return findNum;
+}
+
+int getAvpCodeNumByStr(char* str){
+ int i,j;
+ for(i=0;i<AvpMax;i++){
+  j=0;
+  while(j<AvpStrMax){
+   if(AvpListStr[i][j]!=str[j])j=AvpStrMax;
+   else if(AvpListStr[i][j]=='\0')return AvpListNum[i];
+   j++;
+  }
+ }
+ return 0;
+}
+
+
+void addDiameterHead(char *buf,int len,int code,int appID,int hhID,int eeID)
+{
+ intV2CharV(DiameterVersion,buf,0,1);//version
+ intV2CharV(len,buf,1,3);//message length
+ intV2CharV(DiameterFlags,buf,4,1);//flags
+ intV2CharV(code,buf,5,3);//command code
+ intV2CharV(appID,buf,8,4);//application ID
+ intV2CharV(hhID,buf,12,4);//hop-by-hop ID
+ intV2CharV(eeID,buf,16,4);//end-to-end ID
+}
+
+void addAVPDataStr(char *buf,int code,int flags,int len,char *data, int *indexOri)
+{
+ int index=*indexOri;
+ intV2CharV(code,buf,index,4);
+ intV2CharV(flags&0xff,buf,index+4,1);
+ intV2CharV(len,buf,index+4+1,3);
+ int i;
+ for(i=0;i<len-8;i++)
+  buf[index+4+1+3+i]=data[i];
+  
+ for(i=0;i<4-len%4;i++)
+  buf[index+len+i]=0;
+
+ *indexOri=index+len+(4-len%4)%4;
+}
+void addAVPDataStrByCodeStr(char *buf,char *codeStr,int flags,int len,char *data, int *indexOri)
+{
+	addAVPDataStr(buf,getAvpCodeNumByStr(codeStr),flags,len,data, indexOri);
+}
+
+void addAVPDataNum32(char *buf,int code,int flags,int len,int data, int *indexOri)
+{
+ int index=*indexOri;
+ intV2CharV(code,buf,index,4);
+ intV2CharV(flags&0xff,buf,index+4,1);
+ intV2CharV(len,buf,index+4+1,3);
+ intV2CharV(data,buf,index+4+1+3,4);
+
+ *indexOri=index+len;
+}
+void addAVPDataNum32ByCodeStr(char *buf,char *codeStr,int flags,int len,int data, int *indexOri)
+{
+	addAVPDataNum32(buf,getAvpCodeNumByStr(codeStr),flags,len,data, indexOri);
+}
+
+
+
 
 int getDiameterHeaderNum(int DH,char* buf){
 	
@@ -157,7 +222,7 @@ int getAvpDataStrByNum(char* packet,int index,char* buf){
 int findAvpIndexByStr(char* str,char* buf){
 	int index=20;
 	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,buf);
-	int avpCode=getAvpNumByStr(str);
+	int avpCode=getAvpCodeNumByStr(str);
 
 	int i=index;
 	while(i<len){
