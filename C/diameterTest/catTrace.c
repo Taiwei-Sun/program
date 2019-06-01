@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <string.h>
 #include <dictionary.h>
 
 #define BUFFER_SIZE 512
@@ -18,7 +19,35 @@ int main(int argc, char **argv)
     exit(1);
   }
 
-  
+  int len=strlen(argv[1]);
+  //printf("len=%d\n",len);
+  int bufLen=(len/2)+(len&2);
+  printf("bufLen=%d\n",bufLen);
+  char buf[bufLen];  
+
+  int i;
+  for(i=0;i<len;i++){
+    int v=argv[1][i]-0x30;
+    if(v>=0x0&&v<0x0a){
+      if(i%2==0)buf[i/2]=0;
+      else buf[i/2]*=0x10;
+      buf[i/2]+=v;
+    }
+    if(v>=0x11&&v<0x17){
+      v=v-0x10+0x0a;
+      if(i%2==0)buf[i/2]=0;
+      else buf[i/2]*=0x10;
+      buf[i/2]+=v;
+    }
+    if(v>=0x31&&v<0x37){
+      v=v-0x30+0x0a;
+      if(i%2==0)buf[i/2]=0;
+      else buf[i/2]*=0x10;
+      buf[i/2]+=v;
+    }
+    printf("buf[%d]=%02x\n",i/2,buf[i/2]);
+  }
+
 
 
 

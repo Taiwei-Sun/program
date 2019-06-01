@@ -219,12 +219,12 @@ int getAvpDataStrByNum(char* packet,int index,char* buf){
 
 
 
-int findAvpIndexByStr(char* str,char* buf){
-	int index=20;
+int getAvpPosByCodeStr(char* str,char* buf){
+	int pos=20;
 	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,buf);
 	int avpCode=getAvpCodeNumByStr(str);
 
-	int i=index;
+	int i=pos;
 	while(i<len){
 		printf("getAvpHeaderNum(AvpHeaderCode,buf,%d)=%d\n",i,getAvpHeaderNum(AvpHeaderCode,buf,i));
 		if(avpCode==getAvpHeaderNum(AvpHeaderCode,buf,i))return i;
@@ -237,6 +237,25 @@ int findAvpIndexByStr(char* str,char* buf){
 	
 }
 
+int getAvpPosByIndex(int index,char* buf)
+{
+	int pos=20;
+	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,buf);
+	int avpCode=getAvpCodeNumByStr(str);
+
+	int p=pos;
+	int i=0;
+	while(p<len){
+		if(i==index)return p;
+		int avpLen=getAvpHeaderNum(AvpHeaderLength,buf,p);
+		avpLen=avpLen+(4-avpLen%4)%4;//for padding
+		p=p+avpLen;
+		i++;
+	}
+
+	return -1;
+  
+}
 
 //---old
 int AcctInterimInterval=85;int AccountingRealtimeRequired=483;int AcctMultiSessionId=50;int AccountingRecordNumber=485;int AccountingRecordType=480;int AcctSessionId=44;int AccountingSubSessionId=287;int AcctApplicationId=259;int AuthApplicationId=258;int AuthRequestType=274;int AuthorizationLifetime=291;int AuthGracePeriod=276;int AuthSessionState=277;int ReAuthRequestType=285;int Class=25;int DestinationHost=293;int DestinationRealm=283;int DisconnectCause=273;int ErrorMessage=281;int ErrorReportingHost=294;int EventTimestamp=55;int ExperimentalResult=297;int ExperimentalResultCode=298;int FailedAVP=279;int FirmwareRevision=267;int HostIPAddress=257;int InbandSecurityId=299;int MultiRoundTimeOut=272;int OriginHost=264;int OriginRealm=296;int OriginStateId=278;int ProductName=269;int ProxyHost=280;int ProxyInfo=284;int ProxyState=33;int RedirectHost=292;int RedirectHostUsage=261;int RedirectMaxCacheTime=262;int ResultCode=268;int RouteRecord=282;int SessionId=263;int SessionTimeout=27;int SessionBinding=270;int SessionServerFailover=271;int SupportedVendorId=265;int TerminationCause=295;int UserName=1;int VendorId=266;int VendorSpecificApplicationId=260;
