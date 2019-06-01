@@ -1,4 +1,4 @@
-//20190524 add AVP index
+
 #define AvpHeaderMax 3
 #define AvpHeaderLenMax 8
 #define AvpHeaderCode 0
@@ -8,8 +8,7 @@
 int AvpHeaderIndexListNum[AvpHeaderMax]={0,4,5};
 
 
-//20190523 diameter header index and Avp index
-//20190430 AVP code list
+
 #define DiameterHeaderMax 7
 #define DiameterHeaderLenMax 20
 #define DiameterHeaderVersion 0
@@ -20,69 +19,32 @@ int AvpHeaderIndexListNum[AvpHeaderMax]={0,4,5};
 #define DiameterHeaderHopByHop 5
 #define DiameterHeaderEndToEnd 6
 
+#define AvpMaxOnPacket 10
+
 int DiameterHeaderIndexListNum[DiameterHeaderMax]={0,1,4,5,8,12,16};
 
 
 #define AvpMax 49
 #define AvpStrMax 40
-char AvpListStr[AvpMax][AvpStrMax]={
-"Acct-Interim-Interval",
-"Accounting-Realtime-Required",
-"Acct-Multi-Session-Id",
-"Accounting-Record-Number",
-"Accounting-Record-Type",
-"Acct-Session-Id",
-"Accounting-Sub-Session-Id",
-"Acct-Application-Id",
-"Auth-Application-Id",
-"Auth-Request-Type",
-"Authorization-Lifetime",
-"Auth-Grace-Period",
-"Auth-Session-State",
-"Re-Auth-Request-Type",
-"Class",
-"Destination-Host",
-"Destination-Realm",
-"Disconnect-Cause",
-"Error-Message",
-"Error-Reporting-Host",
-"Event-Timestamp",
-"Experimental-Result",
-"Experimental-Result-Code",
-"Failed-AVP",
-"Firmware-Revision",
-"Host-IP-Address",
-"Inband-Security-Id",
-"Multi-Round-Time-Out",
-"Origin-Host",
-"Origin-Realm",
-"Origin-State-Id",
-"Product-Name",
-"Proxy-Host",
-"Proxy-Info",
-"Proxy-State",
-"Redirect-Host",
-"Redirect-Host-Usage",
-"Redirect-Max-Cache-Time",
-"Result-Code",
-"Route-Record",
-"Session-Id",
-"Session-Timeout",
-"Session-Binding",
-"Session-Server-Failover",
-"Supported-Vendor-Id",
-"Termination-Cause",
-"User-Name",
-"Vendor-Id",
-"Vendor-Specific-Application-Id"};
+char AvpListStr[AvpMax][AvpStrMax]={"Acct-Interim-Interval","Accounting-Realtime-Required","Acct-Multi-Session-Id","Accounting-Record-Number","Accounting-Record-Type","Acct-Session-Id","Accounting-Sub-Session-Id","Acct-Application-Id","Auth-Application-Id","Auth-Request-Type","Authorization-Lifetime","Auth-Grace-Period","Auth-Session-State","Re-Auth-Request-Type","Class","Destination-Host","Destination-Realm","Disconnect-Cause","Error-Message","Error-Reporting-Host","Event-Timestamp","Experimental-Result","Experimental-Result-Code","Failed-AVP","Firmware-Revision","Host-IP-Address","Inband-Security-Id","Multi-Round-Time-Out","Origin-Host","Origin-Realm","Origin-State-Id","Product-Name","Proxy-Host","Proxy-Info","Proxy-State","Redirect-Host","Redirect-Host-Usage","Redirect-Max-Cache-Time","Result-Code","Route-Record","Session-Id","Session-Timeout","Session-Binding","Session-Server-Failover","Supported-Vendor-Id","Termination-Cause","User-Name","Vendor-Id","Vendor-Specific-Application-Id"};
 int AvpListNum[AvpMax]={85,483,50,485,480,44,287,259,258,274,291,276,277,285,25,293,283,273,281,294,55,297,298,279,267,257,299,272,264,296,278,269,280,284,33,292,261,262,268,282,263,27,270,271,265,295,1,266,260};
 
 
 int DiameterVersion=0x01;
 int DiameterFlags=0x80;
-
+typedef struct AvpData {
+  int packetIndex;
+  int code;
+  char flags;
+  int len;
+  char *data;
+} AvpData;
+AvpData avpIndex[AvpMaxOnPacket];
+int avpIndexNum=-1;
 
 //!!!Function
+
+
 void intV2CharV(int v1,char *buf,int start,int len)
 {
  int i;
@@ -107,7 +69,7 @@ int charV2IntV(char *buf,int start,int len)
  return v;
 }
 char getAvpCodeStrByNum(char* str,int num){
- char findNum=0;
+ char findNum=-1;
  int i,j;
  for(i=0;i<AvpMax;i++){
   if(AvpListNum[i]==num){
@@ -204,57 +166,60 @@ int getAvpHeaderNum(int AH,char* buf,int start){
 	return charV2IntV(buf,start+index,len);
 }
 
-int getAvpDataStrByNum(char* packet,int index,char* buf){
-	int len=getAvpHeaderNum(AvpHeaderLength,packet,index);
-	
+void getAvpDataStrByPacketIndexNum(char* packet,int index,int len,char* buf){
 
 	int i;
 	for(i=0;i<len;i++)
 		buf[i]=packet[index+AvpHeaderLenMax+i];	
 	
-	return len;
 }
 
 
 
 
 
-int getAvpPosByCodeStr(char* str,char* buf){
-	int pos=20;
-	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,buf);
-	int avpCode=getAvpCodeNumByStr(str);
 
-	int i=pos;
-	while(i<len){
-		printf("getAvpHeaderNum(AvpHeaderCode,buf,%d)=%d\n",i,getAvpHeaderNum(AvpHeaderCode,buf,i));
-		if(avpCode==getAvpHeaderNum(AvpHeaderCode,buf,i))return i;
-		int avpLen=getAvpHeaderNum(AvpHeaderLength,buf,i);
-		avpLen=avpLen+(4-avpLen%4)%4;//for padding
-		i=i+avpLen;
+
+
+int getAvpPacketIndexByIndex(int index)
+{
+	if(avpIndexNum==-1){
+		printf("no init AVP Index\n");
+		return -1;
 	}
-
-	return -1;
+	if(index=>avpIndexNum){
+		printf("Wrong AVP Index number\n");
+		return -1;
+	}
 	
+	return avpIndex[index].packetIndex;
+  
 }
 
-int getAvpPosByIndex(int index,char* buf)
+void initAvpIndex(char *packet)
 {
 	int pos=20;
-	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,buf);
-	int avpCode=getAvpCodeNumByStr(str);
+	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,packet);
+	
 
 	int p=pos;
 	int i=0;
 	while(p<len){
-		if(i==index)return p;
-		int avpLen=getAvpHeaderNum(AvpHeaderLength,buf,p);
-		avpLen=avpLen+(4-avpLen%4)%4;//for padding
+		avpIndex[i].packetIndex=p;
+		avpIndex[i].code=getAvpHeaderNum(AvpHeaderCode,packet,p);
+		avpIndex[i].flags=getAvpHeaderNum(AvpHeaderFlags,packet,p)&0xff;
+		avpIndex[i].len=getAvpHeaderNum(AvpHeaderLength,packet,p);
+		avpIndex[i].data=malloc(sizeof(char)*(avpIndex[i].len-8));
+		getAvpDataStrByPacketIndexNum(packet,p,avpIndex[i].len,avpIndex[i].data);
+		
+		
+		int avpLen=avpIndex[i].len+(4-avpIndex[i].len%4)%4;//for padding
 		p=p+avpLen;
 		i++;
+		
 	}
-
-	return -1;
-  
+	avpIndexNum=i;
+	
 }
 
 //---old

@@ -61,7 +61,7 @@ int main()
   printf("\nEnd\n");
  
 
-
+/*
   int ttt=getDiameterHeaderNum(DiameterHeaderMessageLenth,buffer);
   printf("message length=%d\n",ttt);
   ttt=getDiameterHeaderNum(DiameterHeaderCommandCode,buffer);
@@ -81,6 +81,9 @@ int main()
 
   //write(client_sockfd, &ch, 1);
   close(client_sockfd);
+*/
+
+
 
 
  //}
