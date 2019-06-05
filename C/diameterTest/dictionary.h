@@ -19,7 +19,7 @@ int AvpHeaderIndexListNum[AvpHeaderMax]={0,4,5};
 #define DiameterHeaderHopByHop 5
 #define DiameterHeaderEndToEnd 6
 
-#define AvpMaxOnPacket 10
+#define AvpMaxOnPacket 15
 
 int DiameterHeaderIndexListNum[DiameterHeaderMax]={0,1,4,5,8,12,16};
 
@@ -60,10 +60,12 @@ int charV2IntV(char *buf,int start,int len)
 {
  int i,v=0;
  for(i=start;i<start+len;i++){
+	//printf("01 i=%d v=%x\n",i,v);
 	v=v<<8;
+	//printf("02 i=%d v=%x\n",i,v);
 	v=v+(buf[i]&0xff);
-	//printf("03 i=%d v=%x\n--\n",i,v);
-	//printf("buf[%d]=%x\n",i,buf[i]&0xff);
+	//printf("03 i=%d v=%x\n",i,v);
+	//printf("buf[%d]=%x\n",i,buf[i]);
  }
  
  return v;
@@ -152,6 +154,7 @@ int getDiameterHeaderNum(int DH,char* buf){
 		len=DiameterHeaderIndexListNum[DH+1]-index;
 	else len=DiameterHeaderLenMax-index;
 	
+	//printf("charV2IntV(buf,index,len)=charV2IntV(buf,%d,%d)\n",index,len);
 	return charV2IntV(buf,index,len);
 }
 
@@ -162,7 +165,8 @@ int getAvpHeaderNum(int AH,char* buf,int start){
 	if(AH+1<AvpHeaderMax)
 		len=AvpHeaderIndexListNum[AH+1]-index;
 	else len=AvpHeaderLenMax-index;
-
+	
+	//printf("charV2IntV(buf,start+index,len)=charV2IntV(buf,%d+%d,%d)\n",start,index,len);
 	return charV2IntV(buf,start+index,len);
 }
 
@@ -176,35 +180,43 @@ void getAvpDataStrByPacketIndexNum(char* packet,int index,int len,char* buf){
 
 
 
-
-
-
-
-
-int getAvpPacketIndexByIndex(int index)
+int checkAvpIndex(int index)
 {
-	if(avpIndexNum==-1){
-		printf("no init AVP Index\n");
-		return -1;
-	}
-	if(index=>avpIndexNum){
-		printf("Wrong AVP Index number\n");
-		return -1;
-	}
-	
-	return avpIndex[index].packetIndex;
+        if(avpIndexNum==-1){
+                printf("no init AVP Index\n");
+                return -1;
+        }
+        if(index>=avpIndexNum){
+                printf("Wrong AVP Index number\n");
+                return -1;
+        }
+
+	return 0;
+}
+
+
+int getAvpNumber(){return avpIndexNum;}
+
+int getAvpCodeByIndex(int index)
+{
+	if(checkAvpIndex(index)==-1)return -1;
+	return avpIndex[index].code;
   
 }
 
 void initAvpIndex(char *packet)
 {
+	//printf("0\n");
 	int pos=20;
 	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,packet);
+	//printf("1 len=%d\n",len);
 	
 
 	int p=pos;
 	int i=0;
+	//printf("2\n");
 	while(p<len){
+		//printf("i=%d ",i);
 		avpIndex[i].packetIndex=p;
 		avpIndex[i].code=getAvpHeaderNum(AvpHeaderCode,packet,p);
 		avpIndex[i].flags=getAvpHeaderNum(AvpHeaderFlags,packet,p)&0xff;
@@ -219,6 +231,7 @@ void initAvpIndex(char *packet)
 		
 	}
 	avpIndexNum=i;
+	//printf("\n3\n");
 	
 }
 
