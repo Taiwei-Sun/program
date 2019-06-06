@@ -61,10 +61,19 @@ int main(int argc, char **argv)
 
 
   initAvpIndex(buf);
-  int avpNum=getAvpNumber(),i;
-  for(i=0;i<avpNum;i++)
-   printf("index=%d code=%03x\n",i,getAvpCodeByIndex(i)); 
-
+  int i;
+  for(i=0;i<avpIndexNum;i++){
+   char tmpS[512];
+   printf("AVP index=%d\n",i);
+   printf("code=%08x\n",avpIndex[i].code);
+   getAvpCodeStrByNum(tmpS,avpIndex[i].code);
+   printf("code name=\"%s\"\n",tmpS);
+   printf("flags=%02x\n",avpIndex[i].flags);
+   printf("len=%06x\n",avpIndex[i].len);
+   getAvpDataStrByIndex(i,tmpS);
+   printf("data=\"%s\"\n",tmpS);
+   printf("--------\n\n");
+  }
 /*
   unsigned char buffer[BUFFER_SIZE];
   int in_len=0;

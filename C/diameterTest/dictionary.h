@@ -5,6 +5,7 @@
 #define AvpHeaderFlags 1
 #define AvpHeaderLength 2
 
+
 int AvpHeaderIndexListNum[AvpHeaderMax]={0,4,5};
 
 
@@ -39,7 +40,8 @@ typedef struct AvpData {
   int len;
   char *data;
 } AvpData;
-AvpData avpIndex[AvpMaxOnPacket];
+//AvpData avpIndex[AvpMaxOnPacket];
+AvpData *avpIndex;
 int avpIndexNum=-1;
 
 //!!!Function
@@ -195,13 +197,30 @@ int checkAvpIndex(int index)
 }
 
 
-int getAvpNumber(){return avpIndexNum;}
 
-int getAvpCodeByIndex(int index)
+void getAvpDataStrByIndex(int index,char *buf)
 {
-	if(checkAvpIndex(index)==-1)return -1;
-	return avpIndex[index].code;
+	if(checkAvpIndex(index)==-1)return;
+
+	int i;
+	for(i=0;i<avpIndex[index].len;i++)
+		buf[i]=avpIndex[index].data[i];
   
+}
+
+int getAvpNum(char *packet)
+{
+  int i=0;
+  int p=20;
+  int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,packet);
+  while(p<len){
+
+   int aLen=getAvpHeaderNum(AvpHeaderLength,packet,p);
+   aLen=aLen+(4-aLen%4)%4;//for padding
+   p=p+aLen;
+   i++;
+  }
+  return i;
 }
 
 void initAvpIndex(char *packet)
@@ -210,6 +229,9 @@ void initAvpIndex(char *packet)
 	int pos=20;
 	int len=getDiameterHeaderNum(DiameterHeaderMessageLenth,packet);
 	//printf("1 len=%d\n",len);
+	avpIndexNum=getAvpNum(packet);
+	printf("avpIndexNum=%d\n",avpIndexNum);
+	avpIndex=malloc(sizeof(AvpData)*avpIndexNum);
 	
 
 	int p=pos;
@@ -230,7 +252,7 @@ void initAvpIndex(char *packet)
 		i++;
 		
 	}
-	avpIndexNum=i;
+	
 	//printf("\n3\n");
 	
 }
