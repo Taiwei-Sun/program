@@ -1,39 +1,72 @@
-
-'''test 1 connect device
-import sys
-from getpass import getpass
+import os, sys, logging
 from jnpr.junos import Device
+from jnpr.junos.utils.sw import SW
 from jnpr.junos.exception import ConnectError
 
-#ssh_config_file = "~/.ssh/config_dc"
-"""
-hostname = input("Device hostname: ")
-junos_username = input("Junos OS username: ")
-junos_password = getpass("Junos OS or SSH key password: ")
-"""
-hostname = "192.168.105.121"
-junos_username="lab"
-junos_password="lab123"
+from lxml import etree
+import xml.etree.ElementTree as ET
+import time
+import threading
+import random 
+import logging
 
+nodeStatus=[]
 
-dev = Device(host=hostname, user=junos_username, passwd=junos_password)
+def check_thread(threads):
+    for i in range(0,len(threads):
+        if threads[i].status!="down":return True
+    return False
+    
+class MyThread(threading.Thread):
+    status="start"
+    def run(self):
+        global nodeStatus
+        print "thread-"+self.getName()+" Start"
+        #logging.info('logging thread-'+str(threadNum)+" Start")
+        tmpTime=random.randint(1, 5)
+        time.sleep(tmpTime)
+        self.status='init'
+        tmpTime=random.randint(1, 10)
+        time.sleep(tmpTime)
+        self.status='config'
+        tmpTime=random.randint(1, 5)
+        time.sleep(tmpTime)
+        self.status='start end'
+        tmpTime=random.randint(1, 5)
+        time.sleep(tmpTime)
+        self.status='down'
+        print "thread-"+self.getName()+" End"
+        #logging.info('logging thread-'+str(threadNum)+" End")
 
-try:
-    dev.open()
-except ConnectError as err:
-    print ("Cannot connect to device: {0}".format(err))
-    sys.exit(1)
-except Exception as err:
-    print (err)
-    sys.exit(1)
+def main():
+    #logging.basicConfig(filename='./ttt.log', level=logging.INFO,format='%(asctime)s:%(name)s: %(message)s')
+    logging.getLogger().name = 'test logging'
+    #logging.getLogger().addHandler(logging.StreamHandler())
+    logging.info('ttttt')
+
+    
+    th=[]
+    for i in range(0,5):
+        th.append(MyThread(name = str(i + 1)))
+        th[i].start()
+        time.sleep(1)
     
     
+    while check_thread(th):
+        for i in range(0,len(th)):
+            print th[i].status+" "+str(i)+" ",
+        print "|"
+        time.sleep(3)
 
-print (dev.facts)
+   
 
-dev.close()
-'''
+if __name__ == "__main__":
+    main()
 
+
+
+
+'''test 2 connect device established from client
 import socket
 from jnpr.junos import Device
 from jnpr.junos.exception import ConnectError
@@ -101,6 +134,45 @@ def main():
 
 if __name__ == "__main__":
     main()
+'''    
+    
+
+
+'''test 1 connect device
+import sys
+from getpass import getpass
+from jnpr.junos import Device
+from jnpr.junos.exception import ConnectError
+
+#ssh_config_file = "~/.ssh/config_dc"
+"""
+hostname = input("Device hostname: ")
+junos_username = input("Junos OS username: ")
+junos_password = getpass("Junos OS or SSH key password: ")
+"""
+hostname = "192.168.105.121"
+junos_username="lab"
+junos_password="lab123"
+
+
+dev = Device(host=hostname, user=junos_username, passwd=junos_password)
+
+try:
+    dev.open()
+except ConnectError as err:
+    print ("Cannot connect to device: {0}".format(err))
+    sys.exit(1)
+except Exception as err:
+    print (err)
+    sys.exit(1)
     
     
+
+print (dev.facts)
+
+dev.close()
+'''
+
+
+
     

@@ -1,0 +1,47 @@
+---
+- name: Install Junos OS
+  hosts: srx320
+  roles:
+    - Juniper.junos 
+  connection: local
+  gather_facts: no
+  
+  vars:
+    OS_version: "15.1X49-D180.2"
+    OS_package: "junos-srxsme-15.1X49-D180.2-domestic.tgz"
+    pkg_dir: "/var/lib/tftpboot"
+    log_dir: "/var/log/ansible"
+    netconf_port: 830
+    wait_time: 3600
+    inventory_hostname: srx320
+
+  tasks:
+    - name: Checking NETCONF connectivity
+      wait_for: 
+        host: "{{ inventory_hostname }}" 
+        port: "{{ netconf_port }}"
+        timeout: 5
+
+    - name: Install Junos OS package
+      juniper_junos_software:
+        version: "{{ OS_version }}"
+        local_package: "{{ pkg_dir }}/{{ OS_package }}"
+        reboot: true
+        validate: true
+        logfile: "{{ log_dir }}/software.log"
+      register: sw
+      notify:
+      - wait_reboot
+
+    - name: Print response
+      debug:
+        var: response
+
+  handlers:
+    - name: wait_reboot
+      wait_for: 
+        host: "{{ inventory_hostname }}"
+        port: "{{ netconf_port }}"
+        timeout: "{{ wait_time }}"
+      when: not sw.check_mode
+
