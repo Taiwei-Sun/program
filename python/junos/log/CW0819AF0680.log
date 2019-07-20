@@ -1,0 +1,137 @@
+show system alarm|no-more<output>
+2 alarms currently active
+Alarm time               Class  Description
+2019-07-17 09:22:50 UTC  Minor  Autorecovery information needs to be saved
+2019-07-17 09:22:49 UTC  Minor  Rescue configuration is not set
+</output>show chassis alarm|no-more<output>
+No alarms currently active
+</output>show chassis environment|no-more<output>
+Class Item                           Status     Measurement
+Temp  Routing Engine                 OK         46 degrees C / 114 degrees F
+      Routing Engine CPU             OK         67 degrees C / 152 degrees F
+Fans  SRX320 Chassis fan 0           OK         Spinning at normal speed
+      SRX320 Chassis fan 1           OK         Spinning at normal speed
+Power Power Supply 0                 OK        
+</output>show chassis routing-engine|no-more<output>
+Routing Engine status:
+    Temperature                 46 degrees C / 114 degrees F
+    CPU temperature             67 degrees C / 152 degrees F
+    Total memory              4096 MB Max   983 MB used ( 24 percent)
+      Control plane memory    2624 MB Max   604 MB used ( 23 percent)
+      Data plane memory       1472 MB Max   368 MB used ( 25 percent)
+    5 sec CPU utilization:
+      User                      14 percent
+      Background                 0 percent
+      Kernel                    10 percent
+      Interrupt                  0 percent
+      Idle                      75 percent
+    Model                          RE-SRX320
+    Serial ID                      CW0819AF0680
+    Start time                     2019-07-17 09:20:11 UTC
+    Uptime                         9 minutes, 5 seconds
+    Last reboot reason             0x200:normal shutdown 
+    Load averages:                 1 minute   5 minute  15 minute
+                                       0.71       2.08       1.55
+</output>show chassis hardware|no-more<output>
+Hardware inventory:
+Item             Version  Part number  Serial number     Description
+Chassis                                CW0819AF0680      SRX320
+Routing Engine   REV 0x06 650-077893   CW0819AF0680      RE-SRX320
+FPC 0                                                    FPC
+  PIC 0                                                  6xGE,2xGE SFP Base PIC
+FPC 1            REV 06   650-073957   AJ10019924        FPC
+  PIC 0                                                  LTE for AA mPIM
+Power Supply 0  
+</output>show chassis fpc|no-more<output>
+                     Temp  CPU Utilization (%)   CPU Utilization (%)  Memory    Utilization (%)
+Slot State            (C)  Total  Interrupt      1min   5min   15min  DRAM (MB) Heap     Buffer
+  0  Online          -------------------- CPU less FPC --------------------
+  1  Online          -------------------- CPU less FPC --------------------
+  2  Empty           
+</output>show chassis fpc pic-status|no-more<output>
+Slot 0   Online       FPC
+  PIC 0  Online       6xGE,2xGE SFP Base PIC
+Slot 1   Online       FPC
+  PIC 0  Online       LTE for AA mPIM
+</output>show system license|no-more<output>
+License usage: 
+                                 Licenses     Licenses    Licenses    Expiry
+  Feature name                       used    installed      needed 
+  dynamic-vpn                           0            2           0    permanent
+  remote-access-ipsec-vpn-client        0            2           0    permanent
+
+Licenses installed: none
+</output>show version<output>
+Hostname: ZTP_SRX320
+Model: srx320
+Junos: 15.1X49-D180.2
+JUNOS Software Release [15.1X49-D180.2]
+JUNOS Firmware Software Suite [15.1X49-D180.2]
+</output>show system snapshot media internal |no-more<output>
+Information for snapshot on       internal (/dev/da0s1a) (backup)
+Creation date: Jul 17 09:28:22 2019
+JUNOS version on snapshot:
+  junos  : 15.1X49-D180.2-domestic
+Information for snapshot on       internal (/dev/da0s2a) (primary)
+Creation date: Jul 17 09:21:12 2019
+JUNOS version on snapshot:
+  junos  : 15.1X49-D180.2-domestic
+</output>show modem wireless network cl-1/0/0|no-more<output>
+LTE Connection details 
+  Connected time: 0
+  IP: 0.0.0.0
+  Gateway: 0.0.0.0
+  DNS: 0.0.0.0
+  Input bps: 0
+  Output bps: 0
+  Bytes Received: 0
+  Bytes Transferred: 0
+  Packets Received: 0
+  Packets Transferred: 0
+Wireless Modem Network Info 
+  Current Modem Status: Disconnected
+  Current Service Status: Normal
+  Current Service Type: CS
+  Current Service Mode: Unknown
+  Mobile Country Code (MCC): 0
+  Mobile Network Code (MNC): 0
+  Location Area Code (LAC): 0
+  Routing Area Code (RAC): 0
+  Cell Identification: 0
+  Physical Cell ID (PCI): N/A
+  Reference Signal Receiving Power (RSRP): N/A
+  Reference Signal Receiving Quality (RSRQ): N/A
+  Signal to Interference-plus-Noise Ratio (SiNR): N/A
+  Signal Noise Ratio (SNR): N/A
+  Energy per Chip to Interference (ECIO): 0
+</output>show system firmware|no-more<output>
+Part             Type           Tag Current   Available Status
+                                    version   version
+FPC 1           
+  PIC 0          MLTE_FW        1   17.5.508            OK                
+Routing Engine 0 RE BIOS        0   3.1       3.6       OK                
+Routing Engine 0 RE BIOS Backup 1   3.1       3.6       OK                
+</output>show modem wireless profiles cl-1/0/0 slot 1<output>
+Profile details
+  Max profiles: 16
+  Default profile Id: 1
+Profile 1: ACTIVE
+  Valid: TRUE
+  Authentication: None
+  IP Version: IPV4V6
+Profile 2: Invalid
+Profile 3: Invalid
+Profile 4: Invalid
+Profile 5: Invalid
+Profile 6: Invalid
+Profile 7: Invalid
+Profile 8: Invalid
+Profile 9: Invalid
+Profile 10: Invalid
+Profile 11: Invalid
+Profile 12: Invalid
+Profile 13: Invalid
+Profile 14: Invalid
+Profile 15: Invalid
+Profile 16: Invalid
+</output>

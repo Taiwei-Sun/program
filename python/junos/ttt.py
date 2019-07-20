@@ -10,18 +10,17 @@ import threading
 import random 
 import logging
 
-nodeStatus=[]
+
 
 def check_thread(threads):
-    for i in range(0,len(threads):
+    for i in range(0,len(threads)):
         if threads[i].status!="down":return True
     return False
     
 class MyThread(threading.Thread):
     status="start"
     def run(self):
-        global nodeStatus
-        print "thread-"+self.getName()+" Start"
+        #print "thread-"+self.getName()+" Start"
         #logging.info('logging thread-'+str(threadNum)+" Start")
         tmpTime=random.randint(1, 5)
         time.sleep(tmpTime)
@@ -35,7 +34,7 @@ class MyThread(threading.Thread):
         tmpTime=random.randint(1, 5)
         time.sleep(tmpTime)
         self.status='down'
-        print "thread-"+self.getName()+" End"
+        #print "thread-"+self.getName()+" End"
         #logging.info('logging thread-'+str(threadNum)+" End")
 
 def main():
@@ -49,14 +48,14 @@ def main():
     for i in range(0,5):
         th.append(MyThread(name = str(i + 1)))
         th[i].start()
-        time.sleep(1)
+        #time.sleep(1)
     
     
     while check_thread(th):
         for i in range(0,len(th)):
             print th[i].status+" "+str(i)+" ",
         print "|"
-        time.sleep(3)
+        time.sleep(2)
 
    
 
