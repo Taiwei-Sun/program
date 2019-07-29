@@ -1,3 +1,36 @@
+
+
+import sys, select
+
+print "You have three seconds to answer!"
+ioe= select.select( [sys.stdin], [], [], 3 )
+if (ioe[0]):
+  print "You said", sys.stdin.readline().strip()
+else:
+  print "You said nothing!"
+
+print "ioe=",ioe
+
+# A Python program to to return multiple  
+# values from a method using tuple 
+  
+# This function returns a tuple 
+def fun(): 
+    str = "geeksforgeeks"
+    x   = 20
+    return str, x;  # Return tuple, we could also 
+                    # write (str, x) 
+  
+# Driver code to test above method 
+str, x = fun() # Assign returned tuple 
+print(str) 
+print(x) 
+
+array = fun()
+
+print(array[0])
+
+'''
 import os, sys, logging
 from jnpr.junos import Device
 from jnpr.junos.utils.sw import SW
@@ -61,6 +94,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+
 
 
 

@@ -55,8 +55,8 @@ class MyThread(threading.Thread):
         self.status="Start"
         
         update_process(type="checkSerialNumber",host=self.hostIP,package=None,threadIns=self)
-        #update_process(type="setFixIP",host=self.hostIP,package=None,threadIns=self)
-        #update_process(type="OS",host=self.hostIP,package=packageOS,threadIns=self)
+        update_process(type="setFixIP",host=self.hostIP,package=None,threadIns=self)
+        update_process(type="OS",host=self.hostIP,package=packageOS,threadIns=self)
         update_process(type="Firmware",host=self.hostIP,package=packageFirmware,threadIns=self)
         
         update_process(type="Snapshot",host=self.hostIP,package=None,threadIns=self)
@@ -268,6 +268,19 @@ def showThreadStatusOnes(ths):
                 if k.status==j:print k.serialNumber,
             print "   |"
 
+def waitForSkipIP(timeout):
+    print "You skip next ip by type 'q'!"
+    ioe= select.select( [sys.stdin], [], [], timeout )
+    if (ioe[0]):
+        #print "You type", sys.stdin.readline().strip()
+        if(sys.stdin.readline().strip()=="q"):
+            return True
+    else:
+        #print "You type nothing!"
+        None
+    return False
+    
+
 def main():
     
     try:  
@@ -295,7 +308,11 @@ def main():
         while not check_ping(hostnet+str(nextIP)):
             print 'next ip: '+hostnet+str(nextIP)
             showThreadStatusOnes(ths)
-            time.sleep(10)
+            if(waitForSkipIP(10)):
+                nextIP+=1
+            
+            
+            
         ths.append(MyThread(name =str(nextIP)))
         ths[i].start()
         nextIP+=1
