@@ -1,0 +1,82 @@
+GetInterfaceInformation:
+  rpc: get-interface-information
+  args:
+    extensive: True
+    interface_name: '[afgxe][et]*'
+  args_key: interface_name
+  item: physical-interface
+  key: name
+  view: GetInterfaceInformationView
+
+GetInterfaceInformationView:
+  groups:
+    traffic: traffic-statistics
+    input_errors: input-error-list
+    output_errors: output-error-list
+  fields:
+    name: name
+    desc: description
+    admin_status: { admin-status: True=regex(up) }
+    link_status: { oper-status: True=regex(up) }
+    snmp_index: { snmp-index: int }
+    mac_address: current-physical-address
+    speed: speed
+    duplex: duplex            # EX2200, EX2300
+    link_mode: link_mode      # EX2300 (use this) , others...
+    mtu: mtu
+    is_auto_negotiation: { if-auto-negotiation: True=regex(enabled) }
+    logical_table: _LogicalTable
+    logical_interfaces: _GetLogicalInterfaces
+  fields_traffic:
+    rx_bytes: input-bytes
+    tx_bytes: output-bytes
+    rx_packets: input-packets
+    tx_packets: output-packets
+  fields_input_errors:
+    input_errors: input-errors
+  fields_output_errors:
+    output_errors: output-errors
+
+
+_GetLogicalInterfaces:
+  item: logical-interface
+  view: _GetLogicalInterfacesView
+
+_GetLogicalInterfacesView:
+  groups:
+    flags: if-config-flags
+  fields:
+    name: name
+    snmp_index: { snmp-index: int }
+    ae: _GetAe
+    address_families: _GetAddressFamilies
+  fields_flags:
+    iff_up: iff-up
+    iff_down: iff-down
+
+_GetAe:
+  item: lag-traffic-statistics/lag-link
+  view: _GetAeView
+
+_GetAeView:
+  fields:
+    member: name
+
+_GetAddressFamilies:
+  item: address-family
+  view: _GetAddressFamiliesView
+
+_GetAddressFamiliesView:
+  fields:
+    address_family_name: address-family-name
+    interface_addresses: _GetInterfaceAddresses
+
+_GetInterfaceAddresses:
+  item: interface-address
+  view: _GetInterfaceAddressesView
+
+_GetInterfaceAddressesView:
+  fields:
+    ip_addr: ifa-local
+    subnet: ifa-destination
+
