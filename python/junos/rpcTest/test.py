@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 from jnpr.junos import Device
-from ENC_Client.module.jnpr_rpc.jnpr_interface_info import GetInterfaceInformation
+from jnpr_interface_info import GetInterfaceInformation
 
 dev=None
+hostname="192.168.101.31"
+junos_username="lab"
+junos_password="lab123"
 
 def dev_open(conn_info):
     print('DevOpen')
@@ -34,9 +37,11 @@ def dev_close():
         
         
 
+dev_open({'host':hostname, 'user':junos_username, 'passwd':junos_password})
 
 try:
-    eths_rpc = GetInterfaceInformation(self.dev).get() if self._config.config['interface_rpc'] else []
-except:
-    log.debug(f'[{self.dev.facts["hostname"]}] Get eths rpc error: {exception_message()}')
-    raise Exception(f'Get eths rpc error')
+    eths_rpc = GetInterfaceInformation(dev).get() 
+except Exception as err:
+    print("Get eths rpc error: "+str(err))
+
+dev_close()
