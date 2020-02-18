@@ -3,6 +3,8 @@
 from jnpr.junos import Device
 from jnpr_interface_info import GetInterfaceInformation
 
+from lxml import etree
+
 
 hostname="192.168.101.31"
 junos_username="lab"
@@ -59,18 +61,29 @@ except Exception as err:
 
 #show_items(eths_rpc)
 #print(eths_rpc['ge-5/0/0'].admin_status)#origin tag 'admin-status'
-print(eths_rpc['ge-5/0/0'].speed)
+#print(eths_rpc['ge-5/0/0'].name)
+#print(eths_rpc['ge-5/0/0'].desc)
+#print(eths_rpc['ge-5/0/0'].rx_bytes)
+#print(eths_rpc['ge-5/0/0'])
 
-rpc_reply = dev.rpc.get_chassis_inventory()
-print(rpc_reply)
-print(dir(rpc_reply))
-print(rpc_reply.__dir__())
+#print(etree.tostring(dev.rpc.get_route_information()))
+
+print(type(eths_rpc['ge-5/0/0']))
+#print(len(eths_rpc))
+#print(*eths_rpc, sep = "\n") 
+#print(eths_rpc['ge-5/0/0']) 
+
+#rpc_reply = dev.rpc.get_chassis_inventory()
+#print(rpc_reply)
+#print(dir(rpc_reply))
+#print(rpc_reply.__dir__())
+
 #show_items(rpc_reply)
 #doc = rpc_reply.getOwnerDocument()
 #print(doc)
 
 
-print(dir())
+#print(dir())
 
 
 dev_close(dev)
