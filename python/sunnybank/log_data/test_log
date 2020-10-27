@@ -1,6 +1,0 @@
-Jun  8 14:07:38 f51 notice tmm2[24064]: 01490500:5: 4051b731: New session from client IP 192.168.26.176 (ST=/CC=/C=) at VIP 10.51.187.10 Listener /Common/TEST_SSLVPN (Reputation=Unknown)
-Jun  8 14:08:01 f51 notice apd[20498]: 01490113:5: 4051b731: session.logon.last.username is hank
-Jun  8 14:08:02 f51 notice apd[20498]: 01490113:5: 4051b731: session.logon.last.username is hank
-Jun  8 14:08:03 f51 notice apd[20498]: 01490113:5: 4051b731: session.machine_info.last.net_adapter.list.[0].mac_address is 7C:7A:91:76:87:11
-Jun  8 14:08:12 f51 notice tmm2[24064]: 01490549:5: 4051b731: Assigned PPP Dynamic IPv4: 10.51.189.42 Tunnel Type: VPN_TUNNELTYPE_TLS NA Resource: /Common/TEST_NA Client IP: 192.168.26.176
-Jun  8 14:08:13 f51 notice tmm2[24064]: 01490549:5: 4051b731: Assigned PPP Dynamic IPv4: 10.51.189.42 Tunnel Type: VPN_TUNNELTYPE_TLS NA Resource: /Common/TEST_NA Client IP: 192.168.26.176

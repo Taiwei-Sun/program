@@ -1,3 +1,0 @@
-Feb  7 12:43:06 f51 notice tmm3[12476]: 01490500:5: /Common/TestInternalAP:Common:a8e16fca: New session from client IP 10.7.5.205 (ST=/CC=/C=) at VIP 10.80.1.4 Listener /Common/InternalToCoreVip (Reputation=Unknown)
-Feb  7 12:43:21 f51 notice apmd[7284]: 01490010:5: /Common/TestInternalAP:Common:a8e16fca: Username 'f5qnap'
-Feb  7 12:44:09 f51 notice tmm1[12476]: 01490549:5: /Common/TestInternalAP:Common:a8e16fca: Assigned PPP Dynamic IPv4: 10.51.198.247 Tunnel Type: VPN_TUNNELTYPE_TLS NA Resource: /Common/TestInternalAP Client IP: 10.7.5.205 
