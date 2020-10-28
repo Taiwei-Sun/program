@@ -1,3 +1,13 @@
+/*
+https://docs.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights
+https://docs.microsoft.com/en-us/windows/win32/secauthz/access-rights-and-access-masks
+https://docs.microsoft.com/en-us/windows/win32/secbp/changing-privileges-in-a-token
+https://docs.microsoft.com/en-us/windows/win32/secauthz/enabling-and-disabling-privileges-in-c--
+
+
+*/
+
+
 #include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
@@ -15,6 +25,8 @@
 #define ADDRESSES_BUFFER 0x10000
 #define ADDRESSES_HEX_DIGITS_LEN 16
 #define SAVE_FILE_NAME "address.txt"
+
+//#pragma comment( lib, "psapi.lib" )
 
 
 
@@ -118,9 +130,9 @@ void intTo4Char(int i,char ch[4]){
 //void GetProcessNameByID(DWORD processID,TCHAR* szProcessName)
 void GetProcessNameByID(DWORD processID,TCHAR szProcessNameTmp[PROCESS_NAME_MAX])
 {
+	//| PROCESS_VM_READ
 	HANDLE hProcess=OpenProcess( PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, processID);
-	TCHAR szProcessName[PROCESS_NAME_MAX] = TEXT(UNKNOW_PROCESS_NAME);
-	
+	strcpy(szProcessNameTmp,UNKNOW_PROCESS_NAME);
 	
 	// Get the process name.
 
@@ -131,24 +143,23 @@ void GetProcessNameByID(DWORD processID,TCHAR szProcessNameTmp[PROCESS_NAME_MAX]
 
         if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod), &cbNeeded) )
         {
-            int len=GetModuleBaseName( hProcess, hMod, szProcessName, sizeof(szProcessName)/sizeof(TCHAR) );
-			#if DEBUG_READ_PROCESS_NAME_LEN !=0
-			//printf("sizeof(szProcessName)/sizeof(TCHAR)=%d/%d=%d\n",sizeof(szProcessName),sizeof(TCHAR),sizeof(szProcessName)/sizeof(TCHAR));
-			printf("len=%d strlen(szProcessName)=%d\n",len,strlen(szProcessName));
-			#endif
+			int len=GetModuleBaseName( hProcess, hMod, szProcessNameTmp, PROCESS_NAME_MAX/sizeof(TCHAR) );
+#if DEBUG_READ_PROCESS_NAME_LEN !=0
+			//printf("sizeof(szProcessNameTmp)/sizeof(TCHAR)=%d/%d=%d\n",sizeof(szProcessNameTmp),sizeof(TCHAR),sizeof(szProcessNameTmp)/sizeof(TCHAR));
+			printf("len=%d strlen(szProcessNameTmp)=%d\n",len,strlen(szProcessNameTmp));
+#endif
         }
 		else{
-			#if DEBUG_READ_PROCESS_NAME_LEN !=0
-			printf("EnumProcessModules=False strlen(szProcessName)=%d\n",strlen(szProcessName));
-			#endif
+#if DEBUG_READ_PROCESS_NAME_LEN !=0
+			printf("EnumProcessModules=False strlen(szProcessNameTmp)=%d\n",strlen(szProcessNameTmp));
+#endif
 		}
     }
 	else{
-		#if DEBUG_READ_PROCESS_NAME_LEN !=0
-		printf("handle=Null strlen(szProcessName)=%d\n",strlen(szProcessName));
-		#endif
+#if DEBUG_READ_PROCESS_NAME_LEN !=0
+		printf("handle=Null strlen(szProcessNameTmp)=%d\n",strlen(szProcessNameTmp));
+#endif
 	}
-	strcpy(szProcessNameTmp,szProcessName);
     
     
     // Release the handle to the process.
@@ -170,12 +181,12 @@ void firstSearchIntFromMemory(DWORD pid,int targetInt,Node **head,SIZE_T *search
 	}
 	
     
-    for ( lpMem = 0;VirtualQueryEx(pHandle, lpMem, &info, sizeof(info)) == sizeof(info);lpMem += info.RegionSize ) 
+    for ( lpMem = 0;VirtualQueryEx(pHandle, lpMem, &info, sizeof(info)) == sizeof(info); lpMem = (BYTE *)lpMem + info.RegionSize ) 
     {
         
 		//if(lpMem!=info.BaseAddress)printf("\nlpMem=%p info.BaseAddress=%p info.AllocationBase=%p\n",lpMem,info.BaseAddress,info.AllocationBase);
 		
-		if( max>min && (lpMem>(LPCVOID)max || lpMem+info.RegionSize<(LPCVOID)min) ){
+		if( max>min && (lpMem>(LPCVOID)max || (BYTE *)lpMem + info.RegionSize <(LPCVOID)min) ){
 			continue;
 		}
 		
@@ -199,13 +210,13 @@ void firstSearchIntFromMemory(DWORD pid,int targetInt,Node **head,SIZE_T *search
 					wantReadByte=ADDRESSES_BUFFER;
 					totalReadByte-=ADDRESSES_BUFFER-3;// -3 mean if search Int be split 
 				}
-				ReadProcessMemory(pHandle, lpMem+base, buf, wantReadByte, &bytes_read);
+				ReadProcessMemory(pHandle, (BYTE *)lpMem+base, buf, wantReadByte, &bytes_read);
 				if(bytes_read<3)bytes_read=3;//bytes_read(SIZE_T) most be positive
 				for(i=0;i<bytes_read-3;i++){
 					intTo4Char(targetInt,tmpBuf);
 					if(buf[i]==tmpBuf[0]&&buf[i+1]==tmpBuf[1]&&buf[i+2]==tmpBuf[2]&&buf[i+3]==tmpBuf[3]){
 						//printf("buf[i]=%d targetInt=%d\n",buf[i],targetInt);
-						addNode(&newHead,lpMem+base+i);
+						addNode(&newHead,(BYTE *)lpMem+base+i);
 						(*searchAddrNum)++;
 					}
 				
@@ -270,21 +281,21 @@ SIZE_T returnLenFromProcessByID(DWORD pid,LPCVOID lpMem,char buf[],int len) {
 	if(ReadProcessMemory(pHandle, lpMem, buf, sizeof(char)*len, &totalRead))// && totalRead==sizeof(char)*len)
 	{
 		//printf("address=0x%x  value=0x%08x\n",lpMem,buf);//for buf of DWORD
-		#if DEBUG_READ_LEN!=0
+#if DEBUG_READ_LEN!=0
 		printf("succeeds totalRead=%d base addr=%p\n",totalRead,lpMem);
-		#endif
+#endif
 	}
 	else {
-		#if DEBUG_READ_LEN!=0
+#if DEBUG_READ_LEN!=0
 		printf("fails totalRead=%d base addr=%p\n",totalRead,lpMem);
-		#endif
+#endif
 		int errorTmp=GetLastError();
 		
 		if(errorTmp!=299)printf("read process memory error: %d\n",errorTmp);
 		
-		#if DEBUG_READ_LEN!=0
+#if DEBUG_READ_LEN!=0
 		if(errorTmp==6)printf("address=0x%x\n",lpMem);
-		#endif
+#endif
 		
 		if(errorTmp==998){
 			if(totalRead!=0){
@@ -341,7 +352,7 @@ void search4byteFromMemory(int processID,int targetInt,Node **head,SIZE_T *searc
 	*head=newHead;
 }
 
-void printMenu(char *menu[]){
+void printMenu(const char *menu[]){
 	int i=0;
 	while(menu[i]!=0){
 		printf("%2d.  %s\n",i,menu[i]);
@@ -378,7 +389,7 @@ SIZE_T getSizetByUserInput(char *addr){
 	return st;
 }
 
-SIZE_T getSize_tFromInput(char *msg){
+SIZE_T getSize_tFromInput(const char *msg){
 	
 	char hexBuf[ADDRESSES_HEX_DIGITS_LEN]={};
 	printf(msg);
@@ -399,30 +410,29 @@ int main( void )
 {
 	
 	TCHAR szProcessName[PROCESS_NAME_MAX];
-	//printf("MAX_PATH=%d\n",MAX_PATH);
 	DWORD processID=0;
 	
-	char *menuStr[]={"reset searched address","search again","auto search for const value","show all searched addresses",
+	const char *menuStr[]={"reset searched address","search again","auto search for const value","show all searched addresses",
 					"write memory","search value by address","hold value of address","add address to stack","save searched result",
 					"add taged","set addresss range","quit",0};
 	//int menuLen=sizeof(menuStr)/sizeof(menuStr[0]);
 	
-    // Get the list of process identifiers.
+    
     DWORD aProcesses[PROCESS_NUMBER_MAX], cbNeeded, cProcesses;
     unsigned int i;
 	
 	
-	
-	
-
+	// Get the list of process identifiers.
     if ( !EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded ) )
     {
         return 1;
     }
 
-    // Calculate how many process identifiers were returned.
 
+
+    // Calculate how many process identifiers were returned.
     cProcesses = cbNeeded / sizeof(DWORD);
+	
 	TCHAR processesName[cProcesses][PROCESS_NAME_MAX];
 	int processesID[cProcesses];
 	printf("Processes total is %d\n",cProcesses);
@@ -450,7 +460,7 @@ int main( void )
 	int processNum;
 	printf("please, select a number for process:");
 	scanf("%d",&processNum);
-	if(processNum==0){
+	if(processNum==0){//direct access by PID
 		printf("please, select a number for process ID:");
 		scanf("%d",&processNum);
 		printf("you select process id=%d \n",processNum);
@@ -481,7 +491,7 @@ int main( void )
 		printMenu(menuStr);
 		printf("Please, select one:");
 		scanf("%d",&selectNum);
-		char *selectStr=menuStr[selectNum];
+		const char *selectStr=menuStr[selectNum];
 		
 		
 		if(strcmp("reset searched address",menuStr[selectNum])==0){
